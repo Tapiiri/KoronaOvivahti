@@ -9,7 +9,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 conn = psycopg2.connect(
-    f"host=db dbname={os.environ['POSTGRES_DB']} password={os.environ['POSTGRES_PASSWORD']} user=postgres")
+    f"host={os.environ['POSTGRES_HOST']} \
+        dbname={os.environ['POSTGRES_DB']} \
+        password={os.environ['POSTGRES_PASSWORD']} \
+        user={os.environ['POSTGRES_USER']}")
 
 updater = Updater(
     token=os.environ['BOT_TOKEN'], use_context=True)

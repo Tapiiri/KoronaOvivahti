@@ -13,6 +13,8 @@ services:
             - BOT_TOKEN
             - POSTGRES_PASSWORD
             - POSTGRES_DB
+            - POSTGRES_USER
+            - POSTGRES_HOST
         depends_on: 
             - "db"
         command: ["./wait-for-postgres.sh", "db", "python3", "bot.py"]
@@ -29,6 +31,8 @@ services:
             - ADMINBOT_TOKEN
             - POSTGRES_PASSWORD
             - POSTGRES_DB
+            - POSTGRES_USER
+            - POSTGRES_HOST
         depends_on: 
             - "db"
         command: ["./wait-for-postgres.sh", "db", "python3", "adminbot.py"]
