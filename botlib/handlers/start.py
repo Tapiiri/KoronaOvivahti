@@ -1,10 +1,14 @@
 from telegram.ext import CommandHandler
+from functools import partial
 
 
-def start(update, context):
-    greeting = "Hi! Use me to register in and out for an event!"
+def start(conn, update, context):
+    greeting = "Hi, and welcome to KoronaOvivahti!"
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users")
+    records = cur.fetchall()
     context.bot.send_message(
-        chat_id=update.effective_chat.id, text=greeting)
+        chat_id=update.effective_chat.id, text=str(records))
 
 
-handler = CommandHandler('start', start)
+def handler(conn): return CommandHandler('start', partial(start, conn))
