@@ -12,7 +12,8 @@ services:
         image: postgres
         restart: always
         volumes:
-            - ./dbInitScripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./db/dbInitScripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+            - pgdata:/var/lib/postgresql/data
         environment:
             POSTGRES_PASSWORD: linnanvahti
             POSTGRED_DB: ovivahtidatabase
@@ -21,3 +22,7 @@ services:
         restart: always
         ports:
             - 8080:8080
+
+volumes:
+    pgdata:
+        driver: local
