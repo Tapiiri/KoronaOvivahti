@@ -1,4 +1,4 @@
-CREATE TABLE Events (
+CREATE TABLE Spaces (
     id SERIAL PRIMARY KEY, 
     title TEXT, 
     owner INT, 
@@ -7,7 +7,8 @@ CREATE TABLE Events (
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY, 
     handle TEXT, 
-    name TEXT
+    name TEXT,
+    chatState TEXT
     );
 CREATE TABLE DoorEvents (
     id SERIAL PRIMARY KEY, 
