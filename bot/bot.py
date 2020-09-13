@@ -8,7 +8,7 @@ import handlers
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-# conn = psycopg2.connect("dbname=test user=postgres")
+# conn = psycopg2.connect(f"dbname={os.environ['DB_NAME']} user=postgres")
 # cur = conn.cursor()
 # cur.execute("SELECT * FROM my_data");
 # records = cur.fetchall()
