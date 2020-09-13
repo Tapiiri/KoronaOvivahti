@@ -11,13 +11,13 @@ services:
     db:
         image: postgres
         restart: always
+        volumes:
+            - ./dbInitScripts/init.sql:/docker-entrypoint-initdb.d/init.sql
         environment:
             POSTGRES_PASSWORD: linnanvahti
-            POSTGRES_DB: ovivahtidb
+            POSTGRED_DB: ovivahtidatabase
     dbadmin:
         image: adminer
         restart: always
-        volumes:
-            - /dbInitScripts:/docker-entrypoint-initdb.d/
         ports:
             - 8080:8080
