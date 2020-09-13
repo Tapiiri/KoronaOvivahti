@@ -1,3 +1,4 @@
+import os
 from telegram.ext import Updater
 import logging
 
@@ -7,7 +8,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 updater = Updater(
-    token='1208159439:AAEH0Ruz-5PyVpNGMUUpve1T4DuFCN11Yec', use_context=True)
+    token=os.environ['BOT_TOKEN'], use_context=True)
 
 dispatcher = updater.dispatcher
 
