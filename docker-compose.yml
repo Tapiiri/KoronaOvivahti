@@ -4,22 +4,34 @@ services:
         build: 
             context: .
             dockerfile: bot/Dockerfile
+        restart: always
         ports:
             - "22:22"
         volumes:
             - ./bot:/bot
         environment:
             - BOT_TOKEN
+            - POSTGRES_PASSWORD
+            - POSTGRES_DB
+        depends_on: 
+            - "db"
+        command: ["./wait-for-postgres.sh", "db", "python3", "bot.py"]
     adminbot:
         build: 
             context: .
             dockerfile: adminbot/Dockerfile
+        restart: always
         ports:
             - "23:22"
         volumes:
             - ./adminbot:/adminbot
         environment:
             - ADMINBOT_TOKEN
+            - POSTGRES_PASSWORD
+            - POSTGRES_DB
+        depends_on: 
+            - "db"
+        command: ["./wait-for-postgres.sh", "db", "python3", "adminbot.py"]
     db:
         image: postgres
         restart: always
@@ -27,8 +39,8 @@ services:
             - ./db/dbInitScripts/init.sql:/docker-entrypoint-initdb.d/init.sql
             - pgdata:/var/lib/postgresql/data
         environment:
-            POSTGRES_PASSWORD: linnanvahti
-            POSTGRED_DB: ovivahtidatabase
+            - POSTGRES_PASSWORD
+            - POSTGRED_DB
     dbadmin:
         image: adminer
         restart: always
