@@ -6,6 +6,8 @@ services:
             - "22:22"
         volumes:
             - .:/bot
+        environment:
+            - BOT_TOKEN
     db:
         image: postgres
         restart: always
@@ -16,6 +18,6 @@ services:
         image: adminer
         restart: always
         volumes:
-            - /OvivahtiDB:/var/lib/postgresql/data
+            - /dbInitScripts:/docker-entrypoint-initdb.d/
         ports:
             - 8080:8080
