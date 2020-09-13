@@ -1,13 +1,25 @@
 version: '3'
 services: 
     bot:
-        build: .
+        build: 
+            context: .
+            dockerfile: bot/Dockerfile
         ports:
             - "22:22"
         volumes:
-            - .:/bot
+            - ./bot:/bot
         environment:
             - BOT_TOKEN
+    adminbot:
+        build: 
+            context: .
+            dockerfile: adminbot/Dockerfile
+        ports:
+            - "23:22"
+        volumes:
+            - ./adminbot:/adminbot
+        environment:
+            - ADMINBOT_TOKEN
     db:
         image: postgres
         restart: always
