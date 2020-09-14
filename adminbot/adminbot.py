@@ -14,6 +14,7 @@ conn = psycopg2.connect(
         dbname={os.environ['POSTGRES_DB']} \
         password={os.environ['POSTGRES_PASSWORD']} \
         user={os.environ['POSTGRES_USER']}")
+conn.set_session(autocommit=True)
 
 updater = Updater(
     token=os.environ['ADMINBOT_TOKEN'], use_context=True)
