@@ -7,8 +7,7 @@ CREATE TABLE Spaces (
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY, 
     handle TEXT, 
-    name TEXT,
-    chatState TEXT
+    name TEXT
     );
 CREATE TABLE DoorEvents (
     id SERIAL PRIMARY KEY, 
