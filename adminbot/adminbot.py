@@ -1,20 +1,18 @@
 import os
 from functools import partial
-import psycopg2
+import psycopg2.pool
 from telegram.ext import Updater
 import logging
 
 import handlers
-
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
-
-conn = psycopg2.connect(
+                    
+pool = psycopg2.pool.ThreadedConnectionPool(0, 10,
     f"host={os.environ['POSTGRES_HOST']} \
         dbname={os.environ['POSTGRES_DB']} \
         password={os.environ['POSTGRES_PASSWORD']} \
         user={os.environ['POSTGRES_USER']}")
-conn.set_session(autocommit=True)
 
 updater = Updater(
     token=os.environ['ADMINBOT_TOKEN'], use_context=True)
@@ -22,6 +20,6 @@ updater = Updater(
 dispatcher = updater.dispatcher
 
 for module in handlers.__all__:
-    dispatcher.add_handler(getattr(handlers, module).handler(conn))
+    dispatcher.add_handler(getattr(handlers, module).handler(pool))
 
 updater.start_polling()
