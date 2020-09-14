@@ -4,7 +4,6 @@ services:
         build: 
             context: .
             dockerfile: bot/Dockerfile
-        restart: always
         ports:
             - "22:22"
         volumes:
@@ -22,7 +21,6 @@ services:
         build: 
             context: .
             dockerfile: adminbot/Dockerfile
-        restart: always
         ports:
             - "23:22"
         volumes:
