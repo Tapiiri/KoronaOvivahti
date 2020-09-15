@@ -3,8 +3,7 @@ from functools import partial
 import psycopg2.pool
 from telegram.ext import Updater
 import logging
-
-import handlers
+from handlers import start, newspace, myspaces
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -18,8 +17,15 @@ updater = Updater(
     token=os.environ['BOT_TOKEN'], use_context=True)
 
 dispatcher = updater.dispatcher
+dispatcher.bot_data["pool"] = pool
 
-for module in handlers.__all__:
-    dispatcher.add_handler(getattr(handlers, module).handler(pool))
+bot_handler_modules = [
+    start,
+    newspace,
+    myspaces,
+]
+
+for module in bot_handler_modules:
+    dispatcher.add_handler(module.handler)
 
 updater.start_polling()
