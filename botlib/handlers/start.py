@@ -1,16 +1,18 @@
 from telegram.ext import CommandHandler
 from functools import partial
-from dbhelpers import set_user
+from dbhelpers import upsert_user
 
-def start(pool, update, context):
+def start(update, context):
+    pool = context.bot_data["pool"]
     with pool.getconn() as conn:
         greeting = "Hi, and welcome to KoronaOvivahti!"
         user = {
-            "handle": "tapiiri",
-            "name": "Ilmari"
+            "id": update.effective_user.id,
+            "handle": update.effective_user.name,
+            "name": update.effective_user.full_name
         }
-        set_user(conn, user)
+        upsert_user(conn, user)
         context.bot.send_message(
             chat_id=update.effective_chat.id, text=str(user))
 
-def handler(pool): return CommandHandler('start', partial(start, pool))
+handler = CommandHandler('start', start)

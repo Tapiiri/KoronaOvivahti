@@ -1,7 +1,7 @@
 CREATE TABLE Spaces (
     id SERIAL PRIMARY KEY, 
     title TEXT, 
-    handle TEXT,
+    handle TEXT UNIQUE,
     owner_id INT, 
     date DATE
     );
