@@ -11,8 +11,10 @@ def list_spaces(conn, fields=[], params={}):
     fields_string += ")"
 
     params_string = " "
+    param_list = []
     for key in params:
-        param = "{}='{}',".format(key, params[key])
+        param = f"{key}=%s,"
+        param_list.append(params[key])
         params_string += param
     params_string = params_string[:-1]
     
@@ -23,6 +25,7 @@ def list_spaces(conn, fields=[], params={}):
                 fields and fields_string or "*",
                 params and "WHERE " + params_string
                 or ""
-            ))
+            )
+            ), param_list
     )
     return cur
