@@ -1,7 +1,7 @@
 from telegram.ext import CommandHandler, ConversationHandler, MessageHandler
 from telegram.ext.filters import Filters
-from dbhelpers import list_spaces, join_space
-from handlers import cancel
+from botlib.dbhelpers import list_spaces, join_space
+from . import cancel
 
 def join(update, context):
     try:
@@ -24,7 +24,11 @@ def join_to_space(update, context, deep_linked_space=None):
         if space is not None:
             space_id = space[0]
             tg_id = update.effective_user.id
-            join_space(conn, space_id, tg_id)
+            success = join_space(conn, space_id, tg_id)
+            if not success:
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id, text="You've already joined {}.".format(space[1]))
+                return ConversationHandler.END
         else:
             context.bot.send_message(
                 chat_id=update.effective_chat.id, text="Space not found - try again")        
