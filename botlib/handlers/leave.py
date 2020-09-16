@@ -35,6 +35,6 @@ def leave_from_space(update, context, deep_linked_space=None):
 
 handler = ConversationHandler(
     [CommandHandler('leave', leave)],
-    { "ask_space": [MessageHandler(Filters.text, leave_from_space)]},
-    [cancel.handler]
+    { "ask_space": [cancel.handler, MessageHandler(Filters.text, leave_from_space)]},
+    []
 )

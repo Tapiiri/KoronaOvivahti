@@ -6,6 +6,7 @@ import logging
 from psycopg2 import ProgrammingError, InternalError, OperationalError
 from psycopg2.errors import UniqueViolation
 import re
+from handlers import cancel
 
 def check_value(value_name, context):
     try: 
@@ -153,10 +154,11 @@ def fallback(update, context):
 handler = ConversationHandler(
     [CommandHandler('newspace', newspace)],
     {            
-        "title": [MessageHandler(Filters.text, set_title)],
-        "handle": [MessageHandler(Filters.text, set_handle)],
-        "date": [MessageHandler(Filters.text, set_date)],
+        "title": [cancel.handler, MessageHandler(Filters.text, set_title)],
+        "handle": [cancel.handler, MessageHandler(Filters.text, set_handle)],
+        "date": [cancel.handler, MessageHandler(Filters.text, set_date)],
         "confirm_or_edit": [
+                        cancel.handler, 
                         CommandHandler("name", ask_again("title", ask_title)),
                         CommandHandler("handle",  ask_again("handle", ask_handle)),
                         CommandHandler("date",  ask_again("date", ask_date)),

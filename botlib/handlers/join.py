@@ -35,6 +35,6 @@ def join_to_space(update, context, deep_linked_space=None):
 
 handler = ConversationHandler(
     [CommandHandler('join', join)],
-    { "ask_space": [MessageHandler(Filters.text, join_to_space)]},
-    [cancel.handler]
+    { "ask_space": [cancel.handler,  MessageHandler(Filters.text, join_to_space)]},
+    []
 )

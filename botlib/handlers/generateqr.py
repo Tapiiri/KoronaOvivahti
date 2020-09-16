@@ -2,6 +2,7 @@ from telegram.ext import CommandHandler, ConversationHandler, MessageHandler
 from telegram.ext.filters import Filters
 from telegram.utils.helpers import create_deep_linked_url
 from dbhelpers import list_my_spaces
+from handlers import cancel
 import datetime
 import requests
 import logging
@@ -50,6 +51,6 @@ def check_space(update, context):
 
 handler = ConversationHandler(
     [CommandHandler('generateqr', generateqr)],
-    {"choose_space": [MessageHandler(Filters.text, check_space)]},
+    {"choose_space": [cancel.handler, MessageHandler(Filters.text, check_space)]},
     []
 )
