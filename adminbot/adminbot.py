@@ -29,3 +29,4 @@ for module in bot_handler_modules:
     dispatcher.add_handler(module.handler)
 
 updater.start_polling()
+updater.idle()

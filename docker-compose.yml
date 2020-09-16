@@ -14,7 +14,6 @@ services:
             - POSTGRES_DB
             - POSTGRES_USER
             - POSTGRES_HOST
-            - USER_BOT_NAME
         depends_on: 
             - "db"
         command: ["./wait-for-postgres.sh", "db", "python3", "bot.py"]
