@@ -41,10 +41,12 @@ def check_space(update, context):
             context.bot.send_photo(
                 chat_id=update.effective_chat.id,
                 photo=io.BufferedReader(photo))
+        return ConversationHandler.END
     else:
         context.bot.send_message(
             chat_id=update.effective_chat.id, text="Incorrect handle")
         return generateqr(update, context)
+    
 
 handler = ConversationHandler(
     [CommandHandler('generateqr', generateqr)],
