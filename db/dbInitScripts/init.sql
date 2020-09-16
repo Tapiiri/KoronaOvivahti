@@ -7,6 +7,7 @@ CREATE TABLE Spaces (
     );
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY, 
+    tg_id INT UNIQUE,
     handle TEXT, 
     name TEXT
     );

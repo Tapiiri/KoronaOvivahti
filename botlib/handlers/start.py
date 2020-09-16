@@ -7,7 +7,7 @@ def start(update, context):
     with pool.getconn() as conn:
         greeting = "Hi, and welcome to KoronaOvivahti!"
         user = {
-            "id": update.effective_user.id,
+            "tg_id": update.effective_user.id,
             "handle": update.effective_user.name,
             "name": update.effective_user.full_name
         }
