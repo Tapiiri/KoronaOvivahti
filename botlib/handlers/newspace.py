@@ -125,7 +125,7 @@ def create_space(update, context):
     try:
         with pool.getconn() as conn:
             tg_id = update.effective_user.id
-            user_id = get_user_id(conn, tg_id).fetchone()
+            user_id = get_user_id(conn, tg_id).fetchone()[0]
             space["owner_id"] = user_id
             try:
                 set_space(conn, space)

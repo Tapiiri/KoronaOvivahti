@@ -14,6 +14,7 @@ services:
             - POSTGRES_DB
             - POSTGRES_USER
             - POSTGRES_HOST
+            - USER_BOT_NAME
         depends_on: 
             - "db"
         command: ["./wait-for-postgres.sh", "db", "python3", "bot.py"]
@@ -31,6 +32,7 @@ services:
             - POSTGRES_DB
             - POSTGRES_USER
             - POSTGRES_HOST
+            - USER_BOT_NAME
         depends_on: 
             - "db"
         command: ["./wait-for-postgres.sh", "db", "python3", "adminbot.py"]
@@ -47,7 +49,10 @@ services:
         image: adminer
         restart: always
         ports:
-            - 8080:8080
+            - 4000:8080
+    qr:
+        image: samwierema/go-qr-generator
+
 
 volumes:
     postgres_data:
