@@ -1,8 +1,7 @@
-import importlib
-
-from handlers import start
-from handlers import newspace
-from handlers import myspaces
-from handlers import generateqr
-from handlers import join
-from handlers import leave
+from botlib import dbhelpers
+from botlib.handlers import start
+from botlib.handlers import newspace
+from botlib.handlers import myspaces
+from botlib.handlers import generateqr
+from botlib.handlers import join
+from botlib.handlers import leave

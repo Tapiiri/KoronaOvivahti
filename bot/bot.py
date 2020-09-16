@@ -3,7 +3,7 @@ from functools import partial
 import psycopg2.pool
 from telegram.ext import Updater
 import logging
-from handlers import start, join, leave
+from botlib.handlers import start, join, leave
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 

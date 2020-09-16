@@ -7,7 +7,8 @@ services:
         ports:
             - "22:22"
         volumes:
-            - ./bot:/bot
+            - ./bot:/code/bot
+            - ./botlib:/code/bot/botlib
         environment:
             - BOT_TOKEN
             - POSTGRES_PASSWORD
@@ -16,7 +17,7 @@ services:
             - POSTGRES_HOST
         depends_on: 
             - "db"
-        command: ["./wait-for-postgres.sh", "db", "python3", "bot.py"]
+        command: ["./wait-for-postgres.sh", "db", "python3", "bot/bot.py"]
     adminbot:
         build: 
             context: .
@@ -24,7 +25,8 @@ services:
         ports:
             - "23:22"
         volumes:
-            - ./adminbot:/adminbot
+            - ./adminbot:/code/adminbot
+            - ./botlib:/code/adminbot/botlib
         environment:
             - ADMINBOT_TOKEN
             - POSTGRES_PASSWORD
@@ -34,7 +36,7 @@ services:
             - USER_BOT_NAME
         depends_on: 
             - "db"
-        command: ["./wait-for-postgres.sh", "db", "python3", "adminbot.py"]
+        command: ["./wait-for-postgres.sh", "db", "python3", "adminbot/adminbot.py"]
     db:
         image: postgres
         restart: always
@@ -48,7 +50,7 @@ services:
         image: adminer
         restart: always
         ports:
-            - 4000:8080
+            - 8080:8080
     qr:
         image: samwierema/go-qr-generator
 

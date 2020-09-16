@@ -1,6 +1,5 @@
 from telegram.ext import CommandHandler
-from functools import partial
-from dbhelpers import upsert_user
+from botlib.dbhelpers import upsert_user
 
 def start(update, context):
     pool = context.bot_data["pool"]

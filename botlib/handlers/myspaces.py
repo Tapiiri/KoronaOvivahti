@@ -1,6 +1,5 @@
 from telegram.ext import CommandHandler
-from functools import partial
-from dbhelpers import list_my_spaces
+from botlib.dbhelpers import list_my_spaces
 import datetime
 from psycopg2 import ProgrammingError
 

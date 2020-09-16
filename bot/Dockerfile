@@ -10,8 +10,5 @@ RUN pip3 install --upgrade pip \
     && pip3 install -r requirements.txt
 
 EXPOSE 22
-COPY bot/ .
-COPY botlib .
 COPY wait-for-postgres.sh .
-
-CMD [ "python3", "bot.py" ]
+CMD [ "python3", "bot/bot.py" ]
