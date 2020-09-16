@@ -1,12 +1,12 @@
 from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, Filters
-from functools import partial
-from dbhelpers import set_space, list_spaces, get_user_id
+from botlib.dbhelpers import set_space, list_spaces, get_user_id
 import datetime
 import logging
 from psycopg2 import ProgrammingError, InternalError, OperationalError
 from psycopg2.errors import UniqueViolation
 import re
-from handlers import cancel
+import urllib
+from . import cancel
 
 def check_value(value_name, context):
     try: 
@@ -57,13 +57,22 @@ def handle_available(handle, context):
 def set_handle(update, context, existing_handle=None):
     handle = existing_handle or update.message.text
     handle = handle.lower()
-    if handle_available(handle, context):
-        set_value("handle", handle, context)
-        return ask_date(update, context)
+    try:
+        handle = urllib.parse.quote(handle)
+    except UnicodeEncodeError:
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text="Encoding error when parsing handle - choose another handle!")
+    if len(handle) < 64:
+        if handle_available(handle, context):
+            set_value("handle", handle, context)
+            return ask_date(update, context)
+        else:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id, text="Handle already in use")
     else:
         context.bot.send_message(
-            chat_id=update.effective_chat.id, text="Handle already in use")
-        return ask_handle(update, context)
+                chat_id=update.effective_chat.id, text="Handle is too long")
+    return ask_handle(update, context)
 
 def ask_date(update, context):
     date =  check_value("date", context)
