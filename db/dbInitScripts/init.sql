@@ -1,27 +1,31 @@
-CREATE TABLE Spaces (
+CREATE TABLE spaces (
     id SERIAL PRIMARY KEY, 
     title TEXT, 
-    owner INT, 
+    handle TEXT UNIQUE,
+    owner_id INT, 
     date DATE
     );
-CREATE TABLE Users (
+
+CREATE TABLE users (
     id SERIAL PRIMARY KEY, 
+    tg_id INT UNIQUE,
     handle TEXT, 
-    name TEXT,
-    chatState TEXT
+    name TEXT
     );
-CREATE TABLE DoorEvents (
+
+CREATE TABLE doorevents (
     id SERIAL PRIMARY KEY, 
-    createdAt TIMESTAMP, 
-    eventId INT, 
-    userId INT, 
-    inOrOut BOOLEAN
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    space_id INT, 
+    user_id INT, 
+    in_or_out SMALLINT
     );
-CREATE TABLE Admins (
+
+CREATE TABLE admins (
     id SERIAL PRIMARY KEY, 
-    createdAt TIMESTAMP, 
-    eventId INT, 
-    userId INT,
-    approvingAdminId INT,
-    AdminStatus BOOLEAN
+    created_at TIMESTAMP, 
+    space_id INT, 
+    user_id INT,
+    approving_admin_id INT,
+    admin_status BOOLEAN
 );

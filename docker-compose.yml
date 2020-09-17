@@ -1,28 +1,72 @@
 version: '3'
 services: 
     bot:
-        build: .
+        build: 
+            context: .
+            dockerfile: bot/Dockerfile
         ports:
             - "22:22"
         volumes:
-            - .:/bot
+            - type: bind
+              source: ./bot
+              target: /code/bot
+            - type: bind
+              source: ./botlib
+              target: /code/bot/botlib
         environment:
             - BOT_TOKEN
+            - POSTGRES_PASSWORD
+            - POSTGRES_DB
+            - POSTGRES_USER
+            - POSTGRES_HOST
+        depends_on: 
+            - "db"
+        command: ["./wait-for-postgres.sh", "db", "python3", "bot/bot.py"]
+    adminbot:
+        build: 
+            context: .
+            dockerfile: adminbot/Dockerfile
+        ports:
+            - "23:22"
+        volumes:
+            - type: bind
+              source: ./adminbot
+              target: /code/adminbot
+            - type: bind
+              source: ./botlib
+              target: /code/adminbot/botlib
+            - db_exports:/tmp/db_exports
+        environment:
+            - ADMINBOT_TOKEN
+            - POSTGRES_PASSWORD
+            - POSTGRES_DB
+            - POSTGRES_USER
+            - POSTGRES_HOST
+            - USER_BOT_NAME
+        depends_on: 
+            - "db"
+        command: ["./wait-for-postgres.sh", "db", "python3", "adminbot/adminbot.py"]
     db:
         image: postgres
         restart: always
         volumes:
             - ./db/dbInitScripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-            - pgdata:/var/lib/postgresql/data
+            - postgres_data:/var/lib/postgresql/data
+            - db_exports:/tmp/
         environment:
-            POSTGRES_PASSWORD: linnanvahti
-            POSTGRED_DB: ovivahtidatabase
+            - POSTGRES_PASSWORD
+            - POSTGRED_DB
     dbadmin:
         image: adminer
         restart: always
         ports:
             - 8080:8080
+    qr:
+        image: samwierema/go-qr-generator
+
 
 volumes:
-    pgdata:
+    postgres_data:
+        driver: local
+    db_exports:
         driver: local
