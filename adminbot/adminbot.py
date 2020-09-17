@@ -3,7 +3,7 @@ from functools import partial
 import psycopg2.pool
 from telegram.ext import Updater
 import logging
-from botlib.handlers import start, newspace, myspaces, generateqr
+from botlib.handlers import start, newspace, myspaces, generateqr, export_data
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
                     
@@ -23,7 +23,8 @@ bot_handler_modules = [
     start,
     newspace,
     myspaces,
-    generateqr
+    generateqr,
+    export_data
 ]
 
 for module in bot_handler_modules:
