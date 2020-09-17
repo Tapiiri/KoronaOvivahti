@@ -7,8 +7,12 @@ services:
         ports:
             - "22:22"
         volumes:
-            - ./bot:/code/bot
-            - ./botlib:/code/bot/botlib
+            - type: bind
+              source: ./bot
+              target: /code/bot
+            - type: bind
+              source: ./botlib
+              target: /code/bot/botlib
         environment:
             - BOT_TOKEN
             - POSTGRES_PASSWORD
@@ -25,8 +29,13 @@ services:
         ports:
             - "23:22"
         volumes:
-            - ./adminbot:/code/adminbot
-            - ./botlib:/code/adminbot/botlib
+            - type: bind
+              source: ./adminbot
+              target: /code/adminbot
+            - type: bind
+              source: ./botlib
+              target: /code/adminbot/botlib
+            - db_exports:/tmp/db_exports
         environment:
             - ADMINBOT_TOKEN
             - POSTGRES_PASSWORD
@@ -43,6 +52,7 @@ services:
         volumes:
             - ./db/dbInitScripts/init.sql:/docker-entrypoint-initdb.d/init.sql
             - postgres_data:/var/lib/postgresql/data
+            - db_exports:/tmp/
         environment:
             - POSTGRES_PASSWORD
             - POSTGRED_DB
@@ -57,4 +67,6 @@ services:
 
 volumes:
     postgres_data:
+        driver: local
+    db_exports:
         driver: local
