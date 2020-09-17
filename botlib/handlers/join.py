@@ -6,7 +6,7 @@ from . import cancel
 def join(update, context):
     try:
         deep_linked_space = context.args[0]
-        return join_space(update, context, deep_linked_space)
+        return join_to_space(update, context, deep_linked_space)
     except IndexError:
         return ask_space(update, context)
 

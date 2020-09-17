@@ -6,3 +6,4 @@ from botlib.handlers import generateqr
 from botlib.handlers import join
 from botlib.handlers import leave
 from botlib.handlers import export_data
+from botlib.handlers import start_with_payload

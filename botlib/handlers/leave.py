@@ -6,7 +6,7 @@ from . import cancel
 def leave(update, context):
     try:
         deep_linked_space = context.args[0]
-        return leave_space(update, context, deep_linked_space)
+        return leave_from_space(update, context, deep_linked_space)
     except IndexError:
         return ask_space(update, context)
 

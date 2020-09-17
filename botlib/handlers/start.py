@@ -1,5 +1,6 @@
 from telegram.ext import CommandHandler
 from botlib.dbhelpers import upsert_user
+from telegram.ext.filters import Filters
 
 def start(update, context):
     pool = context.bot_data["pool"]
@@ -12,6 +13,6 @@ def start(update, context):
         }
         upsert_user(conn, user)
         context.bot.send_message(
-            chat_id=update.effective_chat.id, text=str(user))
+            chat_id=update.effective_chat.id, text=greeting)
 
 handler = CommandHandler('start', start)
