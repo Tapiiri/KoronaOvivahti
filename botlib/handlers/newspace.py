@@ -50,6 +50,8 @@ def ask_handle(update, context):
 
 @with_conn
 def handle_available(handle, context, conn):
+    if handle == context.user_data["editedspace"]["handle"]:
+        return True
     spaces_with_same_handle = list_spaces(conn, fields=["handle"], params={"handle":handle})
     return spaces_with_same_handle.fetchone() is None
 

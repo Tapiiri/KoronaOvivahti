@@ -7,3 +7,4 @@ from botlib.dbhelpers.join_space import join_space
 from botlib.dbhelpers.leave_space import leave_space
 from botlib.dbhelpers.door_event_export import door_event_export
 from botlib.dbhelpers.get_space_id import get_space_id
+from botlib.dbhelpers.update_space import update_space
