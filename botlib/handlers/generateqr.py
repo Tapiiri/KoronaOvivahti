@@ -3,27 +3,27 @@ from telegram.ext.filters import Filters
 from telegram.utils.helpers import create_deep_linked_url
 from botlib.dbhelpers import list_my_spaces
 from . import cancel
+from ._with_conn_dec import with_conn
 import datetime
 import requests
 import logging
 import io
 import os
 
-def generateqr(update, context):
-    pool = context.bot_data["pool"]
+@with_conn
+def generateqr(update, context, conn):
     tg_id = update.effective_user.id
     fields = ["handle", "title", "date"]
-    with pool.getconn() as conn:
-        spaces = list_my_spaces(conn, fields, tg_id)
-        context.user_data["space_handles"] = []
-        message = "Choose space for which to generate QR"
-        for space in spaces:
-            context.user_data["space_handles"].append(space[0])
-            message += "\n/{}, {} {}".format(
-                space[0],
-                space[1],
-                space[2].strftime("%a %d.%m.%Y")
-            )
+    spaces = list_my_spaces(conn, fields, tg_id)
+    context.user_data["space_handles"] = []
+    message = "Choose space for which to generate QR"
+    for space in spaces:
+        context.user_data["space_handles"].append(space[0])
+        message += "\n/{}, {} {}".format(
+            space[0],
+            space[1],
+            space[2].strftime("%a %d.%m.%Y")
+        )
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=message)
     return "choose_space"

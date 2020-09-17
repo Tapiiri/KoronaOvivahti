@@ -7,6 +7,7 @@ from psycopg2.errors import UniqueViolation
 import re
 import urllib
 from . import cancel
+from ._with_conn_dec import with_conn
 
 def check_value(value_name, context):
     try: 
@@ -47,12 +48,10 @@ def ask_handle(update, context):
         chat_id=update.effective_chat.id, text="Handle of space")
     return "handle"
 
-def handle_available(handle, context):
-    pool = context.bot_data["pool"]
-    with pool.getconn() as conn:
-        spaces_with_same_handle = list_spaces(conn, fields=["handle"], params={"handle":handle})
-        return spaces_with_same_handle.fetchone() is None
-
+@with_conn
+def handle_available(handle, context, conn):
+    spaces_with_same_handle = list_spaces(conn, fields=["handle"], params={"handle":handle})
+    return spaces_with_same_handle.fetchone() is None
 
 def set_handle(update, context, existing_handle=None):
     handle = existing_handle or update.message.text
@@ -129,20 +128,19 @@ def ask_again(value, callback):
 
     return again_wrapper
 
-def create_space(update, context):
-    pool = context.bot_data["pool"]
+@with_conn
+def create_space(update, context, conn):
     space = context.user_data["newspace"]
     try:
-        with pool.getconn() as conn:
-            tg_id = update.effective_user.id
-            user_id = get_user_id(conn, tg_id).fetchone()[0]
-            space["owner_id"] = user_id
-            try:
-                set_space(conn, space)
-            except UniqueViolation:
-                context.bot.send_message(
-                    chat_id=update.effective_chat.id, text="Handle already in use")
-                return ask_again("handle", ask_handle)(update, context)
+        tg_id = update.effective_user.id
+        user_id = get_user_id(conn, tg_id).fetchone()[0]
+        space["owner_id"] = user_id
+        try:
+            set_space(conn, space)
+        except UniqueViolation:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id, text="Handle already in use")
+            return ask_again("handle", ask_handle)(update, context)
     except (ProgrammingError,  InternalError, OperationalError):
         context.bot.send_message(
             chat_id=update.effective_chat.id, text="Something went wrong - try again later")

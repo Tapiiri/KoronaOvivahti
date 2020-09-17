@@ -7,3 +7,4 @@ from botlib.handlers import join
 from botlib.handlers import leave
 from botlib.handlers import export_data
 from botlib.handlers import start_with_payload
+from botlib.handlers import _with_conn_dec
