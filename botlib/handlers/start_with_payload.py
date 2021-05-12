@@ -4,6 +4,7 @@ from botlib.dbhelpers import upsert_user
 from .join import join
 from ._with_conn_dec import with_conn
 
+
 @with_conn
 def start_with_payload(update, context, conn):
     greeting = "Hi, and welcome to KoronaOvivahti!"
@@ -23,8 +24,6 @@ def start_with_payload(update, context, conn):
         except IndexError:
             return
     return join(update, context)
-
-
 
 
 handler = CommandHandler("start", start_with_payload)

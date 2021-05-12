@@ -10,6 +10,7 @@ import logging
 import io
 import os
 
+
 @with_conn
 def generateqr(update, context, conn):
     tg_id = update.effective_user.id
@@ -28,13 +29,15 @@ def generateqr(update, context, conn):
         chat_id=update.effective_chat.id, text=message)
     return "choose_space"
 
+
 def check_space(update, context):
     space_handles = context.user_data["space_handles"]
     chosen_handle = update.message.text
     if "/" in chosen_handle:
         chosen_handle = update.message.text[1:]
     if chosen_handle in space_handles:
-        qr_payload = create_deep_linked_url(os.environ["USER_BOT_NAME"], chosen_handle)
+        qr_payload = create_deep_linked_url(
+            os.environ["USER_BOT_NAME"], chosen_handle)
         qr_request_url = "http://qr:8080/?data={}".format(qr_payload)
         r = requests.get(qr_request_url)
         if r.status_code == 200:
@@ -47,10 +50,11 @@ def check_space(update, context):
         context.bot.send_message(
             chat_id=update.effective_chat.id, text="Incorrect handle")
         return generateqr(update, context)
-    
+
 
 handler = ConversationHandler(
     [CommandHandler('generateqr', generateqr)],
-    {"choose_space": [cancel.handler, MessageHandler(Filters.text, check_space)]},
+    {"choose_space": [cancel.handler,
+                      MessageHandler(Filters.text, check_space)]},
     []
 )

@@ -1,6 +1,7 @@
 from psycopg2 import sql
 from .get_space_id import get_space_id
 
+
 def door_event_export(conn, space_handle, export_name):
     space_id = get_space_id(conn, space_handle).fetchone()[0]
     export_path = "/tmp/" + export_name
@@ -22,10 +23,8 @@ def door_event_export(conn, space_handle, export_name):
 
             ) TO %(export_path)s DELIMITER ';' CSV HEADER
         """, {
-            "space_id": space_id,
-            "export_path": export_path
-        }
+        "space_id": space_id,
+        "export_path": export_path
+    }
     )
     return cur
-
-    

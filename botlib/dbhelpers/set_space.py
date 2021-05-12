@@ -8,5 +8,5 @@ def set_space(conn, space):
                             %(handle)s,
                             %(owner_id)s,
                             %(date)s);""",
-                        space
+                    space
                     )
