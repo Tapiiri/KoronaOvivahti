@@ -8,6 +8,6 @@ def update_space(conn, space):
                         date=%(date)s
                     WHERE
                         id=%(id)s;""",
-                    space
+                space
                 )
     return cur.rowcount > 0

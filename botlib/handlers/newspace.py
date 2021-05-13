@@ -9,36 +9,41 @@ import urllib
 from . import cancel
 from ._with_conn_dec import with_conn
 
+
 def check_value(value_name, context):
-    try: 
+    try:
         value = context.user_data["newspace"][value_name]
         return value
     except KeyError:
         return None
 
+
 def set_value(value_name, value, context):
     context.user_data["newspace"] = {
-            **context.user_data["newspace"],
-            value_name : value
-        }
+        **context.user_data["newspace"],
+        value_name: value
+    }
 
 
 def newspace(update, context):
     context.user_data["newspace"] = {}
     return ask_title(update, context)
 
+
 def ask_title(update, context):
-    title =  check_value("title", context)
+    title = check_value("title", context)
     if title:
         return set_title(update, context, title)
     context.bot.send_message(
         chat_id=update.effective_chat.id, text="Name of space")
     return "title"
 
+
 def set_title(update, context, existing_title=None):
     title = existing_title or update.message.text
     set_value("title", title, context)
     return ask_handle(update, context)
+
 
 def ask_handle(update, context):
     handle = check_value("handle", context)
@@ -48,12 +53,18 @@ def ask_handle(update, context):
         chat_id=update.effective_chat.id, text="Handle of space")
     return "handle"
 
+
 @with_conn
 def handle_available(handle, context, conn):
-    if handle == context.user_data["editedspace"]["handle"]:
-        return True
-    spaces_with_same_handle = list_spaces(conn, fields=["handle"], params={"handle":handle})
+    try:
+        if handle == context.user_data["newspace"]["handle"]:
+            return True
+    except KeyError:
+        pass
+    spaces_with_same_handle = list_spaces(
+        conn, fields=["handle"], params={"handle": handle})
     return spaces_with_same_handle.fetchone() is None
+
 
 def set_handle(update, context, existing_handle=None):
     handle = existing_handle or update.message.text
@@ -72,11 +83,12 @@ def set_handle(update, context, existing_handle=None):
                 chat_id=update.effective_chat.id, text="Handle already in use")
     else:
         context.bot.send_message(
-                chat_id=update.effective_chat.id, text="Handle is too long")
+            chat_id=update.effective_chat.id, text="Handle is too long")
     return ask_handle(update, context)
 
+
 def ask_date(update, context):
-    date =  check_value("date", context)
+    date = check_value("date", context)
     if date:
         date_text = date.strftime("%d.%m.%Y")
         return set_date(update, context, date_text)
@@ -84,17 +96,20 @@ def ask_date(update, context):
         chat_id=update.effective_chat.id, text="Date of space, format DD MM YYYY")
     return "date"
 
+
 def find_date_delimiter(date_text):
     pattern = re.compile("\D")
     matches = re.finditer(pattern, date_text)
     first_match_index = next(matches).start()
     return date_text[first_match_index]
 
+
 def parse_date(date_text):
     dl = date_delimiter = find_date_delimiter(date_text)
     date_format = f"%d{dl}%m{dl}%Y"
     date = datetime.datetime.strptime(date_text, date_format).date()
     return date
+
 
 def set_date(update, context, existing_date_text=None):
     date_text = existing_date_text or update.message.text
@@ -108,20 +123,22 @@ def set_date(update, context, existing_date_text=None):
     set_value("date", date, context)
     return confirm(update, context)
 
+
 def confirm(update, context):
     space = context.user_data["newspace"]
     context.bot.send_message(
-            chat_id=update.effective_chat.id, text="""
+        chat_id=update.effective_chat.id, text="""
                 /Confirm space? Click value to edit\n
                 /Name: {title}
                 /Handle: {handle}
                 /Date: {date}
                 """.format(
-                    **{
-                        **space,
-                        "date": space["date"].strftime("%a %d.%m.%Y")
-                    }))
+            **{
+                **space,
+                "date": space["date"].strftime("%a %d.%m.%Y")
+            }))
     return "confirm_or_edit"
+
 
 def ask_again(value, callback):
     def again_wrapper(update, context):
@@ -129,6 +146,7 @@ def ask_again(value, callback):
         return callback(update, context)
 
     return again_wrapper
+
 
 @with_conn
 def create_space(update, context, conn):
@@ -146,32 +164,31 @@ def create_space(update, context, conn):
     except (ProgrammingError,  InternalError, OperationalError):
         context.bot.send_message(
             chat_id=update.effective_chat.id, text="Something went wrong - try again later")
-        logging.exception("Something went wrong when a user was setting a new space")
+        logging.exception(
+            "Something went wrong when a user was setting a new space")
     context.bot.send_message(
-            chat_id=update.effective_chat.id, text="Space created!")
+        chat_id=update.effective_chat.id, text="Space created!")
     return ConversationHandler.END
 
+
 def fallback(update, context):
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text="Ok...? I think I lost track. I'll end this discussion here.")
-        return ConversationHandler.END
-
-
-    
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, text="Ok...? I think I lost track. I'll end this discussion here.")
+    return ConversationHandler.END
 
 
 handler = ConversationHandler(
     [CommandHandler('newspace', newspace)],
-    {            
+    {
         "title": [cancel.handler, MessageHandler(Filters.text, set_title)],
         "handle": [cancel.handler, MessageHandler(Filters.text, set_handle)],
         "date": [cancel.handler, MessageHandler(Filters.text, set_date)],
         "confirm_or_edit": [
-                        cancel.handler, 
-                        CommandHandler("name", ask_again("title", ask_title)),
-                        CommandHandler("handle",  ask_again("handle", ask_handle)),
-                        CommandHandler("date",  ask_again("date", ask_date)),
-                        CommandHandler("confirm", create_space)]
+            cancel.handler,
+            CommandHandler("name", ask_again("title", ask_title)),
+            CommandHandler("handle",  ask_again("handle", ask_handle)),
+            CommandHandler("date",  ask_again("date", ask_date)),
+            CommandHandler("confirm", create_space)]
     },
     [
         MessageHandler(Filters.text, fallback)

@@ -7,6 +7,7 @@ from . import cancel
 from . import newspace
 from ._with_conn_dec import with_conn
 
+
 @with_conn
 def myspaces(update, context, conn):
     tg_id = update.effective_user.id
@@ -16,7 +17,7 @@ def myspaces(update, context, conn):
     context.user_data["spaces"] = {}
     for space in spaces:
         context.user_data["spaces"][space[0]] = {
-            "title": space[1], 
+            "title": space[1],
             "date": space[2],
             "id": space[3]}
         message += "\n/{}, {} {}".format(
@@ -28,6 +29,7 @@ def myspaces(update, context, conn):
         chat_id=update.effective_chat.id, text=message)
     return "choose_space"
 
+
 def choose_space(update, context):
     space_handles = context.user_data["spaces"].keys()
     chosen_handle = update.message.text
@@ -36,15 +38,15 @@ def choose_space(update, context):
     if chosen_handle in space_handles:
         space = {
             **context.user_data["spaces"][chosen_handle],
-            "handle":chosen_handle
+            "handle": chosen_handle
         }
         context.user_data["editedspace"] = space
         message = "/edit space, or /cancel\nName: {title}\nHandle: {handle}\nDate: {date}".format(
-                        **{
-                            **space,
-                            "date": space["date"].strftime("%a %d.%m.%Y")
-                        }
-                    )
+            **{
+                **space,
+                "date": space["date"].strftime("%a %d.%m.%Y")
+            }
+        )
         context.bot.send_message(
             chat_id=update.effective_chat.id, text=message)
         return "edit_space"
@@ -53,9 +55,11 @@ def choose_space(update, context):
             chat_id=update.effective_chat.id, text="Incorrect handle")
         return generateqr(update, context)
 
+
 def edit_space(update, context):
     context.user_data["newspace"] = context.user_data["editedspace"]
     return newspace.confirm(update, context)
+
 
 @with_conn
 def update_the_space(update, context, conn):
@@ -63,15 +67,12 @@ def update_the_space(update, context, conn):
     success = update_space(conn, space)
     if success:
         context.bot.send_message(
-                chat_id=update.effective_chat.id, text="Space updated!")
+            chat_id=update.effective_chat.id, text="Space updated!")
         return "END"
-    else: 
+    else:
         context.bot.send_message(
-                chat_id=update.effective_chat.id, text="Failed to update...try again or /cancel")
+            chat_id=update.effective_chat.id, text="Failed to update...try again or /cancel")
         return newspace.confirm(update, context)
-                
-
-   
 
 
 handler = ConversationHandler(
@@ -88,8 +89,8 @@ handler = ConversationHandler(
                 ]
             },
             [],
-            map_to_parent = {"END":ConversationHandler.END}
+            map_to_parent={"END": ConversationHandler.END}
         )],
     },
     []
-    )
+)

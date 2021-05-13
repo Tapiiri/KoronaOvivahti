@@ -8,7 +8,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 pool = psycopg2.pool.ThreadedConnectionPool(0, 10,
-    f"host={os.environ['POSTGRES_HOST']} \
+                                            f"host={os.environ['POSTGRES_HOST']} \
         dbname={os.environ['POSTGRES_DB']} \
         password={os.environ['POSTGRES_PASSWORD']} \
         user={os.environ['POSTGRES_USER']}")

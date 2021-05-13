@@ -3,8 +3,9 @@ from botlib.dbhelpers import upsert_user
 from telegram.ext.filters import Filters
 from ._with_conn_dec import with_conn
 
+
 @with_conn
-def start(update, context):
+def start(update, context, conn):
     greeting = "Hi, and welcome to KoronaOvivahti!"
     user = {
         "tg_id": update.effective_user.id,
@@ -14,5 +15,6 @@ def start(update, context):
     upsert_user(conn, user)
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=greeting)
+
 
 handler = CommandHandler('start', start)
